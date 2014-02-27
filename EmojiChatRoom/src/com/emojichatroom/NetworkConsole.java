@@ -18,8 +18,12 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.emojicharroom.util.Config;
+import com.emojicharroom.util.DatabaseHelper;
 import com.emojicharroom.util.Logger;
 import com.emojicharroom.util.MySocket;
 
@@ -29,13 +33,16 @@ import com.emojicharroom.util.MySocket;
  */
 public abstract class NetworkConsole implements Runnable {
   private static final int BUFFER_SIZE = 10000;
+  
+  private ChatRoom parent;
   private MySocket mySocket = null;
   private boolean isEstablished = false;
   private byte[] buffer;
   
   public abstract void handleText(String text);
   
-  public NetworkConsole() {
+  public NetworkConsole(ChatRoom parent) {
+    this.parent = parent;
     this.buffer = new byte[BUFFER_SIZE];
     this.mySocket = new MySocket();
     this.isEstablished = false;
@@ -68,17 +75,22 @@ public abstract class NetworkConsole implements Runnable {
   }
   
   public void sendText(String text) throws IOException {
-    if ( text != null ) {
-      Logger.e("Network send:" + text);
-      try {
-        mySocket.writer.write(text.getBytes());
-        //      writer.writeUTF(text);
-      } catch (IOException e) {
-        Logger.e("Send failed: " + e.getMessage());
+    if ( isEstablished ) {
+      if ( text != null ) {
+        Logger.e("Network send:" + text);
+        try {
+          mySocket.writer.write(text.getBytes());
+          //      writer.writeUTF(text);
+        } catch (IOException e) {
+          Logger.e("Send failed: " + e.getMessage());
+        }
+      }
+      else {
+        Logger.e("text is null");
       }
     }
     else {
-      Logger.e("text is null");
+      Logger.e("Connection not established, please check network condition");
     }
   }
 
@@ -87,7 +99,42 @@ public abstract class NetworkConsole implements Runnable {
    */
   @Override
   public void run() {
-    Logger.d("Network Console Receive Thread Start!");
+    Logger.i("Network Console Receive Thread Start!");
+    
+    Logger.i("Try to get emoji list and put it on screen");
+    HashMap<String, String> emojiMap = null;
+    
+
+//    parent.dbHelper = new DatabaseHelper(parent);
+//    try {
+//      parent.dbHelper.createDataBase();
+//    } catch (Exception e) {
+//      Logger.e(e.getMessage());
+//    }
+//    parent.dbHelper.openDataBase();
+//    
+//    try {
+//      emojiMap = parent.dbHelper.getAll();
+//    } catch (Exception e) {
+//      // TODO Auto-generated catch block
+//      Logger.e(e.getMessage());
+//    }
+//    if ( emojiMap != null ) {
+//      Logger.d("Got " + emojiMap.size() + " emoji");
+//      StringBuilder strBld = new StringBuilder();
+//      int count = 0;
+//      for ( Map.Entry<String, String> entry : emojiMap.entrySet() ) {
+//        strBld.append(entry.getKey() + " " + entry.getValue() + " ");
+//        count++;
+//        if ( count == 5 ) {
+//          handleText(strBld.toString());
+//          strBld = new StringBuilder();
+//          count = 0;
+//        }
+//      }
+//    }
+//    parent.dbHelper.close();
+    
     while ( true ) {
       this.init();
 
