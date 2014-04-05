@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +37,14 @@ public abstract class NetworkConsole implements Runnable {
   private MySocket mySocket = null;
   private boolean isEstablished = false;
   private byte[] buffer;
+  
+  public HashMap<Integer, String> emojiMap = null;  
+  public HashMap<Integer, String> wordMap = null;
+  
+//  public HashMap<LikelihoodEntry, Double> likelihoodMap = null;
+  public HashMap<Integer, Double> likelihoodMap = null;
+  
+  public HashMap<Integer, Double> priorMap = null;
   
   public abstract void handleText(String text);
   
@@ -102,23 +109,84 @@ public abstract class NetworkConsole implements Runnable {
     Logger.i("Network Console Receive Thread Start!");
     
     Logger.i("Try to get emoji list and put it on screen");
-    HashMap<String, String> emojiMap = null;
-    
 
-//    parent.dbHelper = new DatabaseHelper(parent);
-//    try {
-//      parent.dbHelper.createDataBase();
-//    } catch (Exception e) {
-//      Logger.e(e.getMessage());
-//    }
-//    parent.dbHelper.openDataBase();
-//    
-//    try {
+    parent.dbHelper = new DatabaseHelper(parent);
+    try {
+      parent.dbHelper.createDataBase();
+    } catch (Exception e) {
+      Logger.e(e.getMessage());
+    }
+    parent.dbHelper.openDataBase();
+    
+    try {
 //      emojiMap = parent.dbHelper.getAll();
-//    } catch (Exception e) {
-//      // TODO Auto-generated catch block
-//      Logger.e(e.getMessage());
+      emojiMap = parent.dbHelper.getEmojiMap();
+      wordMap = parent.dbHelper.getWordMap();
+      priorMap = parent.dbHelper.getPriorMap();
+      likelihoodMap = parent.dbHelper.getLikelihoodMap();
+      
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      Logger.e("", e);
+    }
+    
+//    if ( emojiMap != null ) {
+//      Logger.d("Got " + emojiMap.size() + " emoji");
+//      StringBuilder strBld = new StringBuilder();
+//      int count = 0;
+//      for ( Map.Entry<Integer, String> entry : emojiMap.entrySet() ) {
+//        strBld.append(entry.getKey() + " " + entry.getValue() + " ");
+//        count++;
+//        if ( count == 5 ) {
+//          handleText(strBld.toString());
+//          strBld = new StringBuilder();
+//          count = 0;
+//          break;
+//        }
+//      }
 //    }
+//    else {
+//      Logger.e("EmojiMap is null");
+//    }
+//    
+//    if ( wordMap != null ) {
+//      Logger.d("Got " + wordMap.size() + " emoji");
+//      StringBuilder strBld = new StringBuilder();
+//      int count = 0;
+//      for ( Map.Entry<Integer, String> entry : wordMap.entrySet() ) {
+//        strBld.append(entry.getKey() + " " + entry.getValue() + " ");
+//        count++;
+//        if ( count == 5 ) {
+//          handleText(strBld.toString());
+//          strBld = new StringBuilder();
+//          count = 0;
+//          break;
+//        }
+//      }
+//    }
+//    else {
+//      Logger.e("WordMap is null");
+//    }
+//        
+//    if ( priorMap != null ) {
+//      Logger.d("Got " + priorMap.size() + " emoji");
+//      StringBuilder strBld = new StringBuilder();
+//      int count = 0;
+//      for ( Map.Entry<Integer, Double> entry : priorMap.entrySet() ) {
+//        strBld.append(entry.getKey() + " " + entry.getValue() + " ");
+//        count++;
+//        if ( count == 5 ) {
+//          handleText(strBld.toString());
+//          strBld = new StringBuilder();
+//          count = 0;
+//          break;
+//        }
+//      }
+//    }
+//    else {
+//      Logger.e("PriorMap is null");
+//    }
+    
 //    if ( emojiMap != null ) {
 //      Logger.d("Got " + emojiMap.size() + " emoji");
 //      StringBuilder strBld = new StringBuilder();
@@ -130,13 +198,15 @@ public abstract class NetworkConsole implements Runnable {
 //          handleText(strBld.toString());
 //          strBld = new StringBuilder();
 //          count = 0;
+//          break;
 //        }
 //      }
 //    }
-//    parent.dbHelper.close();
+    parent.dbHelper.close();
     
     while ( true ) {
       this.init();
+      handleText("Connection Established! Let's talk");
 
       while ( isEstablished ) {
         try {

@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -40,13 +42,25 @@ public class DatabaseHelper extends SQLiteOpenHelper{
   //The Android's default system path of your application database.
   String DB_PATH =null;
 
-  private static String DB_NAME = "instagram.sqlite";
+//  private static String DB_NAME = "instagram.sqlite";
+  private static String DB_NAME = "instagram_sentence_mid_new.sqlite";
 
   private SQLiteDatabase myDataBase; 
 
   private final Context myContext;
 
-  public HashMap<String, String> emojiList;
+
+  public HashMap<Integer, String> emojiMap;
+  public HashMap<Integer, String> wordMap;
+  public HashMap<String, Integer> word2IdMap;
+  
+//  public HashMap<LikelihoodEntry, Double> likelihoodMap;
+  public HashMap<Integer, Double> likelihoodMap;
+  
+  public HashMap<Integer, Double> priorMap;
+  public HashMap<Integer, Double> precomputeMap; 
+  public HashMap<Integer, ArrayList<Integer>> zeroMap;
+  public double minValue;
   /**
    * Constructor
    * Takes and keeps a reference of the passed context in order to access to the application assets and resources.
@@ -57,7 +71,17 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     super(context, DB_NAME, null, 1);
     this.myContext = context;
     DB_PATH="/data/data/"+context.getPackageName()+"/"+"databases/";
-    this.emojiList = new HashMap<String, String>();
+    this.emojiMap = new HashMap<Integer, String>();
+    
+    this.wordMap = new HashMap<Integer, String>();
+    this.word2IdMap = new HashMap<String, Integer>();
+    
+//    this.likelihoodMap = new HashMap<LikelihoodEntry, Double>();
+    this.likelihoodMap = new HashMap<Integer, Double>();
+    
+    this.priorMap = new HashMap<Integer, Double>();
+    this.precomputeMap = new HashMap<Integer, Double>();
+    this.zeroMap = new HashMap<Integer, ArrayList<Integer>>();
   }   
 
   /**
@@ -181,7 +205,46 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
   }
 
-  public HashMap<String, String> getAll() {
+//  public HashMap<String, String> getAll() {
+//    Logger.e(this.getReadableDatabase().getPath());
+//    Cursor cursor = myDataBase.query("emoji_text_mapping", null, null, null, null, null, null);
+//    int count = 0;
+//    for ( cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext() ) {
+//      int index1 = cursor.getColumnIndex("eid");
+//      int index2 = cursor.getColumnIndex("emoji");
+//      if ( index1 != -1 && index2 != -1 ) {
+//        String eid = cursor.getInteger(index1);
+//        String emoji = cursor.getString(index2);
+//        emojiMap.put(eid, emoji);
+//      }
+//      else {
+//        Logger.e("Not found");
+//      }
+//      
+////      if ( count > 5 ) {
+////        break;
+////      }
+////      int eid = -1, wid = -1;
+////      double freq = 0.0;
+////      int index = cursor.getColumnIndex("eid");
+////      if ( index != -1 ) {
+////        eid = cursor.getInt(index);
+////      }
+////      index = cursor.getColumnIndex("wid");
+////      if ( index != -1 ) {
+////        wid = cursor.getInt(index);
+////      }
+////      index = cursor.getColumnIndex("p");
+////      if ( index != -1 ) {
+////        freq = cursor.getDouble(index);
+////      }
+////      Logger.e("eid " + eid + " wid " + wid + "freq " + freq);
+//    }
+//    return emojiMap;
+//  }
+
+
+  public HashMap<Integer, String> getEmojiMap() {
     Logger.e(this.getReadableDatabase().getPath());
     Cursor cursor = myDataBase.query("emoji_text_mapping", null, null, null, null, null, null);
     int count = 0;
@@ -189,33 +252,122 @@ public class DatabaseHelper extends SQLiteOpenHelper{
       int index1 = cursor.getColumnIndex("eid");
       int index2 = cursor.getColumnIndex("emoji");
       if ( index1 != -1 && index2 != -1 ) {
-        String eid = cursor.getString(index1);
+        Integer eid = cursor.getInt(index1);
         String emoji = cursor.getString(index2);
-        emojiList.put(eid, emoji);
+        emojiMap.put(eid, emoji);
       }
       else {
         Logger.e("Not found");
       }
-      
-//      if ( count > 5 ) {
-//        break;
-//      }
-//      int eid = -1, wid = -1;
-//      double freq = 0.0;
-//      int index = cursor.getColumnIndex("eid");
-//      if ( index != -1 ) {
-//        eid = cursor.getInt(index);
-//      }
-//      index = cursor.getColumnIndex("wid");
-//      if ( index != -1 ) {
-//        wid = cursor.getInt(index);
-//      }
-//      index = cursor.getColumnIndex("p");
-//      if ( index != -1 ) {
-//        freq = cursor.getDouble(index);
-//      }
-//      Logger.e("eid " + eid + " wid " + wid + "freq " + freq);
     }
-    return emojiList;
+    return emojiMap;
+  }
+  
+  public HashMap<Integer, String> getWordMap() {
+    Logger.e(this.getReadableDatabase().getPath());
+    Cursor cursor = myDataBase.query("word", null, null, null, null, null, null);
+    int count = 0;
+    for ( cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext() ) {
+      int index1 = cursor.getColumnIndex("wid");
+      int index2 = cursor.getColumnIndex("word");
+      if ( index1 != -1 && index2 != -1 ) {
+        Integer wid = cursor.getInt(index1);
+        String word = cursor.getString(index2);
+        wordMap.put(wid, word);
+        word2IdMap.put(word, wid);
+      }
+      else {
+        Logger.e("Not found");
+      }
+    }
+    return wordMap;
+  }
+
+//  public HashMap<LikelihoodEntry, Double> getLikelihoodMap() {
+  public HashMap<Integer, Double> getLikelihoodMap() {
+    Logger.e(this.getReadableDatabase().getPath());
+    Cursor cursor = myDataBase.query("naive", null, null, null, null, null, null);
+    int count = 0;
+    minValue = 10;
+    for ( cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext() ) {
+      int index1 = cursor.getColumnIndex("eid");
+      int index2 = cursor.getColumnIndex("wid");
+      int index3 = cursor.getColumnIndex("p");
+      
+      if ( index1 != -1 && index2 != -1 && index3 != -1 ) {
+        Integer eid = cursor.getInt(index1);
+        Integer wid = cursor.getInt(index2);
+        Double p = cursor.getDouble(index3);
+        likelihoodMap.put(eid*65536+wid, p);
+        if (p < minValue) {
+          minValue = p;
+        }
+
+        if ( Math.abs(p - 1.0) > 1e-7 ) {
+          double prob = precomputeMap.get(eid);
+          precomputeMap.put(eid, prob * (1 - p));
+        }
+        else {
+          // p is 1, 1 - p is 0, put into zero map
+          if (!zeroMap.containsKey(eid)) {
+            ArrayList<Integer> list = new ArrayList<Integer>();
+            zeroMap.put(eid, list);
+          }
+          zeroMap.get(eid).add(wid);
+        }
+      }
+      else {
+        Logger.e("Not found");
+      }
+    }
+    minValue /= 10;
+//    Logger.e("min p = " + minValue);
+//    // smooth the likelihoodMap
+//    for (Map.Entry<Integer, Double> entry : likelihoodMap.entrySet()) {
+//      if (Math.abs(entry.getValue() - 0.0) < 1e-7) {
+//        likelihoodMap.put(entry.getKey(), minValue/10);
+//        int mix = entry.getKey();
+//        int eid = mix / 65536;
+//        int wid = mix % 65536;
+//        Logger.e("<" + eid + "," + wid + "> = " + likelihoodMap.get(entry.getKey()));
+//      }
+//    }
+//    // Validate the likelihoodMap
+//    for (Map.Entry<Integer, Double> entry : likelihoodMap.entrySet()) {
+//      if (entry.getValue() == 0) {
+//        int mix = entry.getKey();
+//        int eid = mix / 65536;
+//        int wid = mix % 65536;
+//        Logger.e("<" + eid + "," + wid + "> = 0");
+//      }
+//    }
+    
+    return likelihoodMap;
+  }
+  
+  public HashMap<Integer, Double> getPriorMap() {
+    Logger.e(this.getReadableDatabase().getPath());
+    Cursor cursor = myDataBase.query("emoji_prob", null, null, null, null, null, null);
+    int count = 0;
+    for ( cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext() ) {
+      int index1 = cursor.getColumnIndex("eid");
+      int index2 = cursor.getColumnIndex("p");
+      
+      if ( index1 != -1 && index2 != -1 ) {
+        Integer eid = cursor.getInt(index1);
+        Double p = cursor.getDouble(index2);
+        priorMap.put(eid, p);
+        precomputeMap.put(eid, p);
+      }
+      else {
+        Logger.e("Not found");
+      }
+    }
+    return priorMap;
+  }
+  
+  public HashMap<Integer, Double> getPrecomputeMap() {
+    Logger.e(this.getReadableDatabase().getPath());
+    return precomputeMap;
   }
 }
