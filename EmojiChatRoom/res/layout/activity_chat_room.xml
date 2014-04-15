@@ -31,6 +31,8 @@
         android:divider="@null"
         android:dividerHeight="5dp"
         android:fadeScrollbars="true"
+        android:transcriptMode="alwaysScroll"
+        android:stackFromBottom="true"
         android:scrollbars="vertical" >
     </ListView>
     
@@ -64,6 +66,7 @@
 
     </RelativeLayout>
        
+    <!-- SHOULD BE REPLACED BY THE NEXT LAYOUT -->
     <TableLayout 
         android:id="@+id/table"
         android:layout_weight="1"
@@ -92,6 +95,30 @@
            </TableRow>
         
     </TableLayout>
+    
+    <!-- THE LAYOUT FROM EXAMPLE, SHOULD KEEP USING IT -->
+    <RelativeLayout  
+        android:id="@+id/ll_facechoose"  
+        android:layout_width="fill_parent"  
+        android:layout_height="124dip"  
+        android:background="#f6f5f5"  
+        android:visibility="visible">
+        <android.support.v4.view.ViewPager  
+            android:id="@+id/vp_contains"  
+            android:layout_width="match_parent"  
+            android:layout_height="match_parent" >  
+        </android.support.v4.view.ViewPager>  
+  
+        <LinearLayout  
+            android:id="@+id/iv_image"  
+            android:layout_width="match_parent"  
+            android:layout_height="wrap_content"  
+            android:layout_alignParentBottom="true"  
+            android:layout_marginBottom="6dip"  
+            android:gravity="center"  
+            android:orientation="horizontal" >  
+        </LinearLayout>  
+    </RelativeLayout> 
     
     <RelativeLayout
         android:id="@+id/rl_bottom"
