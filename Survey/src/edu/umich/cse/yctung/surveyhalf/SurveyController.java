@@ -125,8 +125,7 @@ public class SurveyController {
 	}
 	
 	private void showNextQuestion(){
-		if(mQuestinCntNow == 0 || mQuestinCntNow == 31){ // start of a new survey
-		  mQuestinCntNow = 0;
+		if(mQuestinCntNow == 0){ // start of a new survey
 		  if (comprobarSDCard(context)) {
               com.survey.Logger.i("Create new file...");
               File sdcard = Environment.getExternalStorageDirectory();              
@@ -155,69 +154,7 @@ public class SurveyController {
                 }
               }
 		  }
-		} else { // restore answer before make the new question
-			// TODO: save answers
-		  StringBuilder sb = new StringBuilder();
-		  sb.append(mQuestinCntNow + " ");
-		  sb.append(mQIdxNow + " ");		    
-		  sb.append(mSelectedEidNow + " ");
-          sb.append(mRatingNow + " ");
-          sb.append(mDurationQuestionNow + " ");
-          sb.append("\n");
-          if (comprobarSDCard(context)) {
-		    try {
-		      String result = sb.toString();
-//		      com.survey.Logger.i("Saving result to file...");
-//		      File sdcard = Environment.getExternalStorageDirectory();
-//		      if (sdcard != null) {
-//		        com.survey.Logger.i("sdcard OK, path is " + sdcard.getPath());
-//		      }
-//		      else {
-//		        com.survey.Logger.e("sdcard not exist!");
-//		      }
-//		      
-//		      File root = new File(sdcard.getPath() + "/545Survey");
-//		      File survey = new File(root.getPath() + "/survey_" + android.os.Process.myPid() + "_" + ((int)(Math.random()*1000)) + ".txt");
-//		      com.survey.Logger.i("folder path is " + root.getPath());
-//		      com.survey.Logger.i("file path is " + survey.getPath());
-//		      
-//		      if (!root.exists()) {
-//		        com.survey.Logger.e("folder not exist!");
-//		        if (!root.mkdirs()) {
-//		          com.survey.Logger.e("folder still not exist!");
-//		        }
-//		      }
-//		      else {
-//		        com.survey.Logger.i("folder OK");
-//		      }
-//		      
-//		      if (!survey.exists()) {
-//		        survey.createNewFile();
-//                if (!survey.exists()) {
-//                  com.survey.Logger.e("survey still not exist!");
-//                }
-//		      }
-//		      File survey = new File(root, "survey_" + android.os.Process.myPid() + "_" + (int)(Math.random()*100));
-//              File survey = new File(root, "survey_" + android.os.Process.myPid() + ".txt");
-//              File survey = new File(sdcard, "survey_" + android.os.Process.myPid() + ".txt");
-              com.survey.Logger.i("file is " + survey.getName());
-              FileWriter writer = new FileWriter(survey, true);
-              writer.append(result);
-              writer.flush();
-              writer.close();
-//		      BufferedOutputStream writer =
-//		          new BufferedOutputStream(context.openFileOutput("results",
-//		              Context.MODE_PRIVATE | Context.MODE_APPEND));
-//		      result += "\n";
-//		      writer.write(result.getBytes());
-//		      writer.close();
-		    } catch (FileNotFoundException e) {
-		      com.survey.Logger.e("", e);
-		    } catch (IOException e) {
-		      com.survey.Logger.e("", e);
-		    }
-          }
-		}
+		} 
 		mQuestinCntNow += 1;
 		// TODO: randomly select the answer
 		mQIdxNow = mQuestinCntNow;
@@ -279,6 +216,34 @@ public class SurveyController {
 		mSatisfactionBar.setRating(0);
 //		mSatisfactionBar.setVisibility(View.INVISIBLE);
         mSatisfactionBar.setVisibility(View.GONE);
+        
+        // restore answer before make the new question
+        StringBuilder sb = new StringBuilder();
+        sb.append(mQuestinCntNow + " ");
+        sb.append(mQIdxNow + " ");            
+        sb.append(mSelectedEidNow + " ");
+        sb.append(mRatingNow + " ");
+        sb.append(mDurationQuestionNow + " ");
+        sb.append("\n");
+        if (comprobarSDCard(context)) {
+          try {
+            String result = sb.toString();
+            com.survey.Logger.i("file is " + survey.getName());
+            FileWriter writer = new FileWriter(survey, true);
+            writer.append(result);
+            writer.flush();
+            writer.close();
+          } catch (FileNotFoundException e) {
+            com.survey.Logger.e("", e);
+          } catch (IOException e) {
+            com.survey.Logger.e("", e);
+          }
+        }
+        
+        // reset after 30 questions
+        if(mQuestinCntNow == 30) {
+          mQuestinCntNow = 0;
+        }
 		showNextQuestion();
 	}
 }
