@@ -1,0 +1,225 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+    
+
+    <Button
+        android:id="@+id/init"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="Start Survey" />
+    <LinearLayout  
+        android:id="@+id/ll_facechoose"  
+        android:layout_width="fill_parent"  
+        android:layout_height="wrap_content"
+        android:background="#f6f5f5"  
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/init"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
+        android:visibility="visible"
+        android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context=".MainActivity" >
+
+        <TextView
+            android:id="@+id/surveyGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/surveyInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/surveyQuestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp" />
+
+        <RatingBar
+            android:id="@+id/satisficationBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:visibility="invisible"/>
+
+    </LinearLayout>
+        <LinearLayout 
+            android:id="@+id/category1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+            <Button 
+                android:id="@+id/people"
+            	android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+                android:text="People"></Button>
+            <Button 
+                android:id="@+id/animal"
+            	android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+                android:text="Animal"></Button>
+            <Button 
+                android:id="@+id/random"
+            	android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+                android:text="Random"></Button>
+        </LinearLayout>
+        <LinearLayout 
+            android:id="@+id/category2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+            <Button 
+                android:id="@+id/place"
+            	android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+                android:text="Place"></Button>
+            <Button 
+                android:id="@+id/others"
+            	android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+                android:text="Others"></Button>
+        </LinearLayout>
+        <LinearLayout  
+            android:id="@+id/iv_image"  
+            android:layout_width="match_parent"  
+            android:layout_height="wrap_content"  
+            android:layout_marginBottom="6dip"  
+            android:gravity="center"  
+            android:orientation="horizontal" >  
+        </LinearLayout> 
+        <android.support.v4.view.ViewPager  
+            android:id="@+id/vp_contains"  
+            android:layout_width="match_parent"  
+            android:layout_height="wrap_content">
+        </android.support.v4.view.ViewPager>   
+    </LinearLayout> 
+</RelativeLayout>
+
+
+<!--        THE LAYOUT FROM EXAMPLE, SHOULD KEEP USING IT -->
+<!--     <RelativeLayout   -->
+<!--         android:id="@+id/ll_facechoose"   -->
+<!--         android:layout_width="fill_parent"   -->
+<!--         android:layout_height="300dip" -->
+<!--         android:background="#f6f5f5"   -->
+<!--         android:layout_alignParentBottom="true" -->
+<!--         android:layout_below="@id/init" -->
+<!--         android:visibility="visible"> -->
+<!--         <LinearLayout  -->
+<!--             android:id="@+id/category" -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:layout_centerHorizontal="true" -->
+<!--             android:layout_alignParentTop="true" -->
+<!--             android:orientation="horizontal"> -->
+<!--             <Button  -->
+<!--                 android:id="@+id/flower" -->
+<!--             	android:layout_width="wrap_content" -->
+<!--             	android:layout_height="wrap_content" -->
+<!--                 android:text="Flower"></Button> -->
+<!--             <Button  -->
+<!--                 android:id="@+id/face" -->
+<!--             	android:layout_width="wrap_content" -->
+<!--             	android:layout_height="wrap_content" -->
+<!--                 android:text="Face"></Button> -->
+<!--             <Button  -->
+<!--                 android:id="@+id/others" -->
+<!--             	android:layout_width="wrap_content" -->
+<!--             	android:layout_height="wrap_content" -->
+<!--                 android:text="Others"></Button> -->
+<!--         </LinearLayout> -->
+<!--         <android.support.v4.view.ViewPager   -->
+<!--             android:id="@+id/vp_contains"   -->
+<!--             android:layout_width="match_parent"   -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:layout_below="@id/category"> -->
+<!--         </android.support.v4.view.ViewPager>   -->
+<!--         <LinearLayout   -->
+<!--             android:id="@+id/iv_image"   -->
+<!--             android:layout_width="match_parent"   -->
+<!--             android:layout_height="wrap_content"   -->
+<!--             android:layout_alignParentBottom="true"   -->
+<!--             android:layout_below="@id/vp_contains" -->
+<!--             android:layout_marginBottom="6dip"   -->
+<!--             android:gravity="center"   -->
+<!--             android:orientation="horizontal" >   -->
+<!--         </LinearLayout>   -->
+<!--     </RelativeLayout>  -->
+
+
+
+<!--         THE LAYOUT FROM EXAMPLE, SHOULD KEEP USING IT -->
+<!--     <LinearLayout   -->
+<!--         android:id="@+id/ll_facechoose"   -->
+<!--         android:layout_width="fill_parent"   -->
+<!--         android:layout_height="300dip" -->
+<!--         android:background="#f6f5f5"   -->
+<!--         android:layout_alignParentBottom="true" -->
+<!--         android:layout_below="@id/init" -->
+<!--         android:visibility="visible" -->
+<!--         android:orientation="vertical"> -->
+<!--         <LinearLayout  -->
+<!--             android:id="@+id/category" -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:gravity="center" -->
+<!--             android:orientation="horizontal"> -->
+<!--             <Button  -->
+<!--                 android:id="@+id/flower" -->
+<!--             	android:layout_width="wrap_content" -->
+<!--             	android:layout_height="wrap_content" -->
+<!--                 android:text="Flower"></Button> -->
+<!--             <Button  -->
+<!--                 android:id="@+id/face" -->
+<!--             	android:layout_width="wrap_content" -->
+<!--             	android:layout_height="wrap_content" -->
+<!--                 android:text="Face"></Button> -->
+<!--             <Button  -->
+<!--                 android:id="@+id/others" -->
+<!--             	android:layout_width="wrap_content" -->
+<!--             	android:layout_height="wrap_content" -->
+<!--                 android:text="Others"></Button> -->
+<!--         </LinearLayout> -->
+<!--         <android.support.v4.view.ViewPager   -->
+<!--             android:id="@+id/vp_contains"   -->
+<!--             android:layout_width="match_parent"   -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:layout_below="@id/category"> -->
+<!--         </android.support.v4.view.ViewPager>   -->
+<!--         <LinearLayout   -->
+<!--             android:id="@+id/iv_image"   -->
+<!--             android:layout_width="match_parent"   -->
+<!--             android:layout_height="wrap_content"   -->
+<!--             android:layout_marginBottom="6dip"   -->
+<!--             android:gravity="center"   -->
+<!--             android:orientation="horizontal" >   -->
+<!--         </LinearLayout>   -->
+<!--     </LinearLayout>  -->

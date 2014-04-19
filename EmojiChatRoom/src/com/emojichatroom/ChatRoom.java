@@ -106,6 +106,7 @@ public class ChatRoom extends Activity {
 
     this.table = (TableLayout) findViewById(R.id.table);
     this.emojiPanel = (RelativeLayout) findViewById(R.id.rl_emoji);
+    
     /**
      * More and less button in emoji selector
      */
@@ -120,16 +121,16 @@ public class ChatRoom extends Activity {
       
     });
     
-    this.back = (Button) findViewById(R.id.back);
-    back.setOnClickListener( new OnClickListener() {
-
-      @Override
-      public void onClick(View v) {
-        table.setVisibility(View.GONE);
-        emojiPanel.setVisibility(View.VISIBLE);
-      }
-      
-    });
+//    this.back = (Button) findViewById(R.id.back);
+//    back.setOnClickListener( new OnClickListener() {
+//
+//      @Override
+//      public void onClick(View v) {
+//        table.setVisibility(View.GONE);
+//        emojiPanel.setVisibility(View.VISIBLE);
+//      }
+//      
+//    });
     /**
      * Emoji selector: initial value can be set again
      */
