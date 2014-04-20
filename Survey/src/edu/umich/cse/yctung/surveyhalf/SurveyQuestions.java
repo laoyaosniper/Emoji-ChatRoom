@@ -16,7 +16,7 @@ import android.util.Log;
 
 public class SurveyQuestions {
 	final static String LOG_TAG = "EMOJI";
-	final static int QUESTIONS_CNT = 1000;
+	final static int QUESTIONS_CNT = 2000;
 	final static int EMOJI_CNT = 100;
 	
 	int[] mids = new int[QUESTIONS_CNT];
@@ -28,7 +28,7 @@ public class SurveyQuestions {
 		// 1. read data from asset
 		AssetManager am = context.getAssets();
 		try {
-			InputStreamReader is = new InputStreamReader(am.open("survey_data_predict.txt")); 
+			InputStreamReader is = new InputStreamReader(am.open("survey_data_predict_reconstruct.txt")); 
 			Log.d(LOG_TAG,"read asset data successfully");
 			
 			
@@ -63,7 +63,7 @@ public class SurveyQuestions {
 				}
 			}
 			
-			
+			Log.d(LOG_TAG, "qs length = "+qs.length);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

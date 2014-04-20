@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Random;
 
+import com.survey.Logger;
 import com.survey.MainActivity;
 
 import android.content.Context;
@@ -34,6 +36,8 @@ public class SurveyController {
 	
 	SurveyQuestions mSurveyQuestions;
 	
+	
+	
 	// variable of a round a question/answer
 	String mQuestionNow;
 	int mUserId = 1; // *** this should be a uniqu random number in future ***
@@ -44,6 +48,7 @@ public class SurveyController {
 	long mTimeQuestionStart;
 	long mTimeQuestionAnswered;
 	long mDurationQuestionNow;
+	Random random;
 	
 	private MainActivity context; 
 	
@@ -54,7 +59,7 @@ public class SurveyController {
 		 mTextGuide = textGuideIn;
 		 mTextInfo = textInfoIn;
 		 mSatisfactionBar = satisfactionBarIn;
-		 
+		 random = new Random();
 		 mSurveyQuestions = new SurveyQuestions(context);
 		 this.context = (MainActivity) context;
 //		 makeNewSurvey();
@@ -124,6 +129,13 @@ public class SurveyController {
 	    return true;
 	}
 	
+	
+	
+	public void skipThisQuestion(){
+		mQIdxNow = random.nextInt(SurveyQuestions.QUESTIONS_CNT);
+		showQuestionNow();
+	}
+	
 	private void showNextQuestion(){
 		if(mQuestinCntNow == 0){ // start of a new survey
 		  if (comprobarSDCard(context)) {
@@ -156,18 +168,26 @@ public class SurveyController {
 		  }
 		} 
 		mQuestinCntNow += 1;
-		// TODO: randomly select the answer
-		mQIdxNow = mQuestinCntNow;
+
+		mQIdxNow = random.nextInt(SurveyQuestions.QUESTIONS_CNT);
+        
+		showQuestionNow();
+	}
+
+	
+	private void showQuestionNow(){
+		
         // even then use our prediction
         if ( mQuestinCntNow % 2 != 0 ) {
           Integer[] eidList = mSurveyQuestions.eidsList.get(mQIdxNow);
-
+          context.refleshGroups(false);
           context.Init_viewPager(eidList);
           context.Init_Point();
           context.Init_Data();
         }
         else {
           Integer[] eidList = context.peopleList;
+          context.refleshGroups(true);
           context.Init_viewPager(eidList);
           context.Init_Point();
           context.Init_Data();
@@ -175,15 +195,17 @@ public class SurveyController {
 		
 		// 1. record the time now
 		//mQuestionNow = demoQuestions[mQuestinCntNow-1];
+        Log.d(LOG_TAG,"mQIdxNow = "+mQIdxNow);
 		mQuestionNow = mSurveyQuestions.qs[mQIdxNow];
 		mTextQuestion.setText(mQuestionNow);
 		mTextQuestion.setVisibility(View.VISIBLE);
-		mTextGuide.setText("Please select the emoji that match the following sentence most");
-		mTextInfo.setText(String.format("%d/%d", mQuestinCntNow, TOATL_QUESTION_CNT));
+		mTextGuide.setText("Please select the matchest emoji");
+		mTextInfo.setText(String.format("(%d/%d)", mQuestinCntNow, TOATL_QUESTION_CNT));
+		mSatisfactionBar.setVisibility(View.GONE);
 		
 		mTimeQuestionStart = System.currentTimeMillis();
 	}
-
+	
 	public void questionIsAnswered(int selectEid){
 		// 1. update selected answer
 		mSelectedEidNow = selectEid;
